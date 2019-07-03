@@ -9,7 +9,6 @@
 namespace link1st\Easemob\App\Http;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use link1st\Easemob\App\Exceptions\EasemobException;
@@ -123,12 +122,11 @@ class ApiClient
 
         $result = null;
         if ($response->hasHeader('Content-Type')) {
-            $contentType = strtolower($response->getHeader('Content-Type'));
+            $contentType = strtolower($response->getHeader('Content-Type')[0] ?? '');
             if (substr($contentType, 0, 16) === 'application/json') {
-                try {
-                    $result = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-                } catch (\Exception $e) {
-                    $message = '请求错误！' . $body;
+                $result = json_decode($body, true);
+                if ($result === null) {
+                    $message = '请求错误！返回body不是有效的json：' . $body;
                     throw new EasemobException($message, $status, $e);
                 }
             } else {
@@ -145,16 +143,10 @@ class ApiClient
     protected function getClient(): Client
     {
         if (!$this->client) {
-            $stack = new HandlerStack();
-            $stack->setHandler(new CurlHandler());
-            $stack->push(function () {
-                return function (callable $handler) {
-                    return function (RequestInterface $request, $options) use ($handler) {
-                        $request = $request->withHeader('Authorization', 'Bearer ' . $this->getToken());
-                        return $handler($request, $options);
-                    };
-                };
-            });
+            $stack = HandlerStack::create();
+            $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+                return $request->withHeader('Authorization', 'Bearer ' . $this->getToken());
+            }));
             $stack->push(Middleware::retry(function (
                 $retries,
                 RequestInterface $req,
@@ -191,19 +183,19 @@ class ApiClient
             $client = new Client(['base_uri' => $this->baseUri]);
 
             $option = [
-                'form_params' => [
+                'body' => json_encode([
                     'grant_type' => 'client_credentials',
                     'client_id' => $this->client_id,
                     'client_secret' => $this->client_secret,
-                ]
+                ])
             ];
             $response = $client->post('token', $option);
 
-            $data = json_decode($response->getBody());
+            $data = json_decode($response->getBody()->getContents(), true);
             $token = $data['access_token'];
 
             try {
-                $this->cache->set(self::CACHE_KEY_ACCESS_TOKEN, $token, intval($response['expires_in']));
+                $this->cache->set(self::CACHE_KEY_ACCESS_TOKEN, $token, intval($data['expires_in']));
             } catch (InvalidArgumentException $e) {
                 // ignore
             }
@@ -222,7 +214,7 @@ class ApiClient
      */
     public function post($uri, $params)
     {
-        return $this->request('POST', $uri, ['form_params' => $params]);
+        return $this->request('POST', $uri, ['body' => json_encode($params)]);
     }
 
     /**
@@ -234,7 +226,7 @@ class ApiClient
      */
     public function put($uri, $params)
     {
-        return $this->request('PUT', $uri, ['form_params' => $params]);
+        return $this->request('PUT', $uri, ['body' => json_encode($params)]);
     }
 
     /**
@@ -246,6 +238,6 @@ class ApiClient
      */
     public function delete($uri, $params)
     {
-        return $this->request('DELETE', $uri, ['form_params' => $params]);
+        return $this->request('DELETE', $uri, ['body' => json_encode($params)]);
     }
 }
