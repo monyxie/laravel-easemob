@@ -145,7 +145,7 @@ class ApiClient
     {
         if (!$this->client) {
             $stack = new HandlerStack();
-//        $stack->setHandler(new CurlHandler());
+            $stack->setHandler(new CurlHandler());
             $stack->push(function () {
                 return function (callable $handler) {
                     return function (RequestInterface $request, $options) use ($handler) {
