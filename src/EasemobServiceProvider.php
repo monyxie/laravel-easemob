@@ -56,7 +56,9 @@ class EasemobServiceProvider extends ServiceProvider
             $config['client_secret'] = Config::get('easemob.client_secret');
             $config['token_cache_time'] = Config::get('easemob.token_cache_time');
 
-            return new Easemob($config, $this->app->make('cache'));
+            $laravelCache = $this->app->make('cache');
+            $psr16Cache = new CacheBridge($laravelCache);
+            return new Easemob($config, $laravelCache);
         });
 
         $this->app->alias(Easemob::class, 'Easemob');
