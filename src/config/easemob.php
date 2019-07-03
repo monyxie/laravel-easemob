@@ -10,7 +10,7 @@ return [
     | 不开通VIP都是默认的域名
     */
 
-    'domain_name' => env('DOMAIN_NAME', 'https://a1.easemob.com'),
+    'domain_name' => env('EASEMOB_DOMAIN_NAME', 'https://a1.easemob.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -21,7 +21,7 @@ return [
     | AppKey 后，会得到一个 xxxx#xxxx 格式的字符串，org_name 对应#前面部分
     */
 
-    'org_name' => env('ORG_NAME', ''),
+    'org_name' => env('EASEMOB_ORG_NAME', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +32,7 @@ return [
     | AppKey 后，会得到一个 xxxx#xxxx 格式的字符串，app_name 对应#后面部分
     */
 
-    'app_name'       => env('APP_NAME', ''),
+    'app_name'       => env('EASEMOB_APP_NAME', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'client_id'       => env('CLIENT_ID', ''),
+    'client_id'       => env('EASEMOB_CLIENT_ID', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,6 +50,6 @@ return [
     |
     */
 
-    'client_secret'       => env('CLIENT_SECRET', ''),
+    'client_secret'       => env('EASEMOB_CLIENT_SECRET', ''),
 
 ];

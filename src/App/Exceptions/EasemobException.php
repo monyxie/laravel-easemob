@@ -5,9 +5,9 @@
  * Date: 2016/12/6
  * Time: 15:43
  */
-namespace link1st\Easemob\App;
+namespace link1st\Easemob\App\Exceptions;
 
-class EasemobError extends \Exception
+class EasemobException extends \Exception
 {
 
 }

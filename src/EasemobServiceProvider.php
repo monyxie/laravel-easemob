@@ -1,8 +1,9 @@
 <?php
+
 namespace link1st\Easemob;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-
 use link1st\Easemob\App\Easemob;
 
 class EasemobServiceProvider extends ServiceProvider
@@ -25,12 +26,10 @@ class EasemobServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         // 发布配置文件 + 可以发布迁移文件
         $this->publishes([
-            __DIR__.'/config/easemob.php' => config_path('easemob.php'),
+            __DIR__ . '/config/easemob.php' => config_path('easemob.php'),
         ]);
-
     }
 
 
@@ -45,13 +44,22 @@ class EasemobServiceProvider extends ServiceProvider
     {
         // 将给定配置文件合现配置文件接合
         $this->mergeConfigFrom(
-            __DIR__.'/config/easemob.php', 'easemob'
+            __DIR__ . '/config/easemob.php', 'easemob'
         );
 
         // 容器绑定
-        $this->app->bind('Easemob', function () {
-            return new Easemob();
+        $this->app->singleton(Easemob::class, function () {
+            $config['domain_name'] = Config::get('easemob.domain_name');
+            $config['org_name'] = Config::get('easemob.org_name');
+            $config['app_name'] = Config::get('easemob.app_name');
+            $config['client_id'] = Config::get('easemob.client_id');
+            $config['client_secret'] = Config::get('easemob.client_secret');
+            $config['token_cache_time'] = Config::get('easemob.token_cache_time');
+
+            return new Easemob($config, $this->app->make('cache'));
         });
+
+        $this->app->alias('Easemob', Easemob::class);
     }
 
 
@@ -64,5 +72,4 @@ class EasemobServiceProvider extends ServiceProvider
     {
         return [];
     }
-
 }

@@ -5,7 +5,10 @@
  * Date: 2016/12/7
  * Time: 13:07
  */
+
 namespace link1st\Easemob\App;
+
+use link1st\Easemob\App\Exceptions\EasemobException;
 
 trait EasemobGroups
 {
@@ -16,52 +19,53 @@ trait EasemobGroups
      * @param array $group_ids [群id]
      *
      * @return mixed
-     * @throws EasemobError
      */
     public function groups($group_ids)
     {
 
-        $url          = $this->url.'chatgroups/'.implode(',', $group_ids);
-        $option       = [];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
+        $url = 'chatgroups/' . implode(',', $group_ids);
+        $option = [];
 
-        return Http::postCurl($url, $option, $header, 'GET');
+        return $this->client->get($url, $option);
     }
 
 
     /**
      * 创建群
      *
-     * @param string $group_name        [群名称]
+     * @param string $group_name [群名称]
      * @param string $group_description [群描述]
-     * @param string $owner_user        [群主]
-     * @param array  $members_users     [成员]
-     * @param bool   $is_public         [是否为公开群]
-     * @param int    $max_user          [最大人数]
-     * @param bool   $is_approval       [加群是否要批准]
+     * @param string $owner_user [群主]
+     * @param array $members_users [成员]
+     * @param bool $is_public [是否为公开群]
+     * @param int $max_user [最大人数]
+     * @param bool $is_approval [加群是否要批准]
      *
      * @return mixed
-     * @throws EasemobError
      */
-    public function groupCreate($group_name, $group_description = '描述', $owner_user, $members_users = [], $is_public = true, $max_user = 200, $is_approval = true)
+    public function groupCreate(
+        $group_name,
+        $group_description,
+        $owner_user,
+        $members_users = [],
+        $is_public = true,
+        $max_user = 200,
+        $is_approval = true)
     {
-        $url    = $this->url.'chatgroups';
+        $url = 'chatgroups';
         $option = [
             "groupname" => self::stringReplace($group_name),
-            "desc"      => self::stringReplace($group_description),
-            "owner"     => $owner_user,
-            "public"    => $is_public,
-            "maxusers"  => $max_user,
-            "approval"  => $is_approval,
+            "desc" => self::stringReplace($group_description),
+            "owner" => $owner_user,
+            "public" => $is_public,
+            "maxusers" => $max_user,
+            "approval" => $is_approval,
         ];
-        if ( ! empty($members_users)) {
+        if (!empty($members_users)) {
             $option['members'] = $members_users;
         }
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
 
-        return Http::postCurl($url, $option, $header, 'POST');
+        return $this->client->post($url, $option);
     }
 
 
@@ -71,28 +75,25 @@ trait EasemobGroups
      * @param string $group_id
      * @param string $group_name
      * @param string $group_description
-     * @param int    $max_user
+     * @param int $max_user
      *
      * @return mixed
-     * @throws EasemobError
+     * @throws EasemobException
      */
     public function groupEdit($group_id, $group_name = "", $group_description = "", $max_user = 0)
     {
-        $url    = $this->url.'chatgroups/'.$group_id;
+        $url = 'chatgroups/' . $group_id;
         $option = [
-            "groupname"   => self::stringReplace($group_name),
+            "groupname" => self::stringReplace($group_name),
             "description" => self::stringReplace($group_description),
-            "maxusers"    => $max_user,
+            "maxusers" => $max_user,
         ];
         $option = array_filter($option);
         if (empty($option)) {
-            throw new EasemobError('提交修改的参数，不修改提交空！');
+            throw new EasemobException('提交修改的参数，不修改提交空！');
         }
 
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
-
-        return Http::postCurl($url, $option, $header, 'PUT');
+        return $this->client->put($url, $option);
     }
 
 
@@ -102,16 +103,13 @@ trait EasemobGroups
      * @param string $group_id
      *
      * @return mixed
-     * @throws EasemobError
      */
     public function groupDel($group_id)
     {
-        $url          = $this->url.'chatgroups/'.$group_id;
-        $option       = [];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
+        $url = 'chatgroups/' . $group_id;
+        $option = [];
 
-        return Http::postCurl($url, $option, $header, 'DELETE');
+        return $this->client->delete($url, $option);
     }
 
 
@@ -124,12 +122,10 @@ trait EasemobGroups
      */
     public function groupUsers($group_id)
     {
-        $url          = $this->url.'chatgroups/'.$group_id.'/users';
-        $option       = [];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
+        $url = 'chatgroups/' . $group_id . '/users';
+        $option = [];
 
-        return Http::postCurl($url, $option, $header, 'GET');
+        return $this->client->get($url, $option);
     }
 
 
@@ -137,25 +133,23 @@ trait EasemobGroups
      * 添加群成员——批量
      *
      * @param string $group_id
-     * @param array  $users [用户名称 数组]
+     * @param array $users [用户名称 数组]
      *
      * @return mixed
-     * @throws EasemobError
+     * @throws EasemobException
      */
     public function groupAddUsers($group_id, $users)
     {
         if (count($users) >= 60 || count($users) < 1) {
-            throw new EasemobError('一次最多可以添加60位成员,最少为1个');
+            throw new EasemobException('一次最多可以添加60位成员,最少为1个');
         }
 
-        $url          = $this->url.'chatgroups/'.$group_id.'/users';
-        $option       = [
+        $url = 'chatgroups/' . $group_id . '/users';
+        $option = [
             'usernames' => $users
         ];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
 
-        return Http::postCurl($url, $option, $header, 'POST');
+        return $this->client->post($url, $option);
     }
 
 
@@ -164,23 +158,21 @@ trait EasemobGroups
      * 群主删除 必须先转让群
      *
      * @param string $group_id
-     * @param array  $users [用户名称 数组]
+     * @param array $users [用户名称 数组]
      *
      * @return mixed
-     * @throws EasemobError
+     * @throws EasemobException
      */
     public function groupDelUsers($group_id, $users)
     {
-        if (empty($users) || ! is_array($users)) {
-            throw new EasemobError('删除的用户不存在，或者提交参数不为数组！');
+        if (empty($users) || !is_array($users)) {
+            throw new EasemobException('删除的用户不存在，或者提交参数不为数组！');
         }
 
-        $url          = $this->url.'chatgroups/'.$group_id.'/users/'.implode(',', $users);
-        $option       = [];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
+        $url = 'chatgroups/' . $group_id . '/users/' . implode(',', $users);
+        $option = [];
 
-        return Http::postCurl($url, $option, $header, 'DELETE');
+        return $this->client->delete($url, $option);
     }
 
 
@@ -193,33 +185,29 @@ trait EasemobGroups
      */
     public function userToGroups($user)
     {
-        $url          = $this->url.'users/'.$user.'/joined_chatgroups';
-        $option       = [];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
+        $url = 'users/' . $user . '/joined_chatgroups';
+        $option = [];
 
-        return Http::postCurl($url, $option, $header, 'GET');
+        return $this->client->get($url, $option);
     }
 
 
     /**
      * 群转让
      *
-     * @param $group_id       [群Id]
+     * @param $group_id [群Id]
      * @param $new_owner_user [新的群主]
      *
      * @return mixed
      */
     public function groupTransfer($group_id, $new_owner_user)
     {
-        $url          = $this->url.'chatgroups/'.$group_id;
-        $option       = [
+        $url = 'chatgroups/' . $group_id;
+        $option = [
             'newowner' => $new_owner_user
         ];
-        $access_token = $this->getToken();
-        $header []    = 'Authorization: Bearer '.$access_token;
 
-        return Http::postCurl($url, $option, $header, 'PUT');
+        return $this->client->put($url, $option);
     }
 
 }
