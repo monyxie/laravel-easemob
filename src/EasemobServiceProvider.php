@@ -59,7 +59,7 @@ class EasemobServiceProvider extends ServiceProvider
             return new Easemob($config, $this->app->make('cache'));
         });
 
-        $this->app->alias('Easemob', Easemob::class);
+        $this->app->alias(Easemob::class, 'Easemob');
     }
 
 
