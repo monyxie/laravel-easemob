@@ -87,7 +87,7 @@ class ApiClient
     /**
      * @param $uri
      * @param $params
-     * @return mixed|\Psr\Http\Message\StreamInterface|null
+     * @return string|array
      * @throws EasemobException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -100,7 +100,7 @@ class ApiClient
      * @param $method
      * @param $uri
      * @param array $options
-     * @return mixed|\Psr\Http\Message\StreamInterface|null
+     * @return string|array
      * @throws EasemobException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -203,7 +203,7 @@ class ApiClient
     /**
      * @param $uri
      * @param $params
-     * @return mixed|\Psr\Http\Message\StreamInterface|null
+     * @return string|array
      * @throws EasemobException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -215,7 +215,7 @@ class ApiClient
     /**
      * @param $uri
      * @param $params
-     * @return mixed|\Psr\Http\Message\StreamInterface|null
+     * @return string|array
      * @throws EasemobException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -227,7 +227,7 @@ class ApiClient
     /**
      * @param $uri
      * @param $params
-     * @return mixed|\Psr\Http\Message\StreamInterface|null
+     * @return string|array
      * @throws EasemobException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

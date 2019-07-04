@@ -237,4 +237,51 @@ trait EasemobUsers
         $option = [];
         return $this->client->get($url, $option);
     }
+
+    /**
+     * 获取一个IM用户的黑名单
+     * @param $owner_username
+     *
+     * @return string|array
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function showBlockedUsers($owner_username)
+    {
+        $url = 'users/' . $owner_username . '/block/users';
+        $option = [];
+        return $this->client->get($url, $option);
+    }
+
+    /**
+     * 往一个 IM 用户的黑名单中加人
+     * @param $owner_username
+     * @param $block_usernames
+     * @return string|array
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function blockUsers($owner_username, $block_usernames)
+    {
+        $url = 'users/' . $owner_username . '/block/users';
+        $option = [
+            'usernames' => $block_usernames
+        ];
+        return $this->client->post($url, $option);
+    }
+
+    /**
+     * 将用户从黑名单移除
+     * @param string $owner_username
+     * @param string $blocked_username
+     * @return string|array
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function unblockUser($owner_username, $blocked_username)
+    {
+        $url = 'users/' . $owner_username . '/block/users/' . $blocked_username;
+        $option = [];
+        return $this->client->delete($url, $option);
+    }
 }
