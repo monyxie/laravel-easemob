@@ -18,7 +18,7 @@ use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 /**
- * Http请求类
+ * Sends HTTP requests and handles authentication
  * Class Http
  * @package link1st\Easemob
  */
@@ -45,10 +45,6 @@ class ApiClient
      * @var CacheInterface
      */
     private $cache;
-    /**
-     * @var mixed
-     */
-    private $token_cache_time;
     /**
      * @var mixed
      */
@@ -82,7 +78,6 @@ class ApiClient
         $this->app_name = $config['app_name'];
         $this->client_id = $config['client_id'];
         $this->client_secret = $config['client_secret'];
-        $this->token_cache_time = $config['token_cache_time'];
 
         $this->cache = $cache;
 
@@ -127,7 +122,7 @@ class ApiClient
                 $result = json_decode($body, true);
                 if ($result === null) {
                     $message = '请求错误！返回body不是有效的json：' . $body;
-                    throw new EasemobException($message, $status, $e);
+                    throw new EasemobException($message, $status);
                 }
             } else {
                 $result = $body;

@@ -9,7 +9,13 @@
 namespace link1st\Easemob\App;
 
 use link1st\Easemob\App\Exceptions\EasemobException;
+use link1st\Easemob\App\Http\ApiClient;
 
+/**
+ * Trait EasemobMessages
+ * @package link1st\Easemob\App
+ * @property ApiClient client
+ */
 trait EasemobMessages
 {
 
@@ -24,10 +30,11 @@ trait EasemobMessages
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendMessageText($users, $target_type = 'users', $message = "", $send_user = 'admin', $ext = [])
     {
-        if (!in_array($target_type, $this->target_array)) {
+        if (!in_array($target_type, $this->sendTargets)) {
             throw new EasemobException('target_type 参数错误！');
         }
 
@@ -65,6 +72,7 @@ trait EasemobMessages
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendMessageImg(
         $users,
@@ -76,7 +84,7 @@ trait EasemobMessages
         $height = 720,
         $send_user = 'admin')
     {
-        if (!in_array($target_type, $this->target_array)) {
+        if (!in_array($target_type, $this->sendTargets)) {
             throw new EasemobException('target_type 参数错误！');
         }
 
@@ -114,6 +122,7 @@ trait EasemobMessages
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendMessageAudio(
         $users,
@@ -124,7 +133,7 @@ trait EasemobMessages
         $length = 10,
         $send_user = 'admin')
     {
-        if (!in_array($target_type, $this->target_array)) {
+        if (!in_array($target_type, $this->sendTargets)) {
             throw new EasemobException('target_type 参数错误！');
         }
 
@@ -175,6 +184,7 @@ trait EasemobMessages
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendMessageVideo(
         $users,
@@ -188,7 +198,7 @@ trait EasemobMessages
         $img_share_secret,
         $send_user = 'admin')
     {
-        if (!in_array($target_type, $this->target_array)) {
+        if (!in_array($target_type, $this->sendTargets)) {
             throw new EasemobException('target_type 参数错误！');
         }
 
@@ -223,10 +233,11 @@ trait EasemobMessages
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendMessagePNS($users, $target_type = 'users', $action = "", $send_user = 'admin')
     {
-        if (!in_array($target_type, $this->target_array)) {
+        if (!in_array($target_type, $this->sendTargets)) {
             throw new EasemobException('target_type 参数错误！');
         }
 

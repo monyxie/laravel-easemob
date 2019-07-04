@@ -14,6 +14,10 @@ namespace link1st\Easemob;
 use Illuminate\Contracts\Cache\Repository;
 use Psr\SimpleCache\CacheInterface;
 
+/**
+ * Use laravel cache repository as PSR-16 cache
+ * @package link1st\Easemob
+ */
 class CacheBridge implements CacheInterface
 {
     /**

@@ -9,7 +9,13 @@
 namespace link1st\Easemob\App;
 
 use link1st\Easemob\App\Exceptions\EasemobException;
+use link1st\Easemob\App\Http\ApiClient;
 
+/**
+ * Trait EasemobRooms
+ * @package link1st\Easemob\App
+ * @property ApiClient client
+ */
 trait EasemobRooms
 {
 
@@ -19,6 +25,8 @@ trait EasemobRooms
      * @param $room_id
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function room($room_id)
     {
@@ -39,6 +47,8 @@ trait EasemobRooms
      * @param array $member_users
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function roomCreate($room_name, $owner_name, $room_description = "描述", $max_user = 200, $member_users = [])
     {
@@ -63,6 +73,8 @@ trait EasemobRooms
      * @param $room_id
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function roomDel($room_id)
     {
@@ -83,13 +95,14 @@ trait EasemobRooms
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function roomEdit($room_id, $room_name = "", $room_description = "", $max_user = 0)
     {
         $url = 'chatgroups/' . $room_id;
         $option = [
-            "name" => self::stringReplace($room_name),
-            "description" => self::stringReplace($room_description),
+            "name" => Helpers\Str::stringReplace($room_name),
+            "description" => Helpers\Str::stringReplace($room_description),
             "maxusers" => $max_user,
         ];
         $option = array_filter($option);
@@ -107,6 +120,8 @@ trait EasemobRooms
      * @param $user
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function userToRooms($user)
     {
@@ -124,6 +139,8 @@ trait EasemobRooms
      * @param array $users
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function roomAddUsers($room_id, $users)
     {
@@ -143,6 +160,8 @@ trait EasemobRooms
      * @param array $users
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function roomDelUsers($room_id, $users)
     {

@@ -9,7 +9,13 @@
 namespace link1st\Easemob\App;
 
 use link1st\Easemob\App\Exceptions\EasemobException;
+use link1st\Easemob\App\Http\ApiClient;
 
+/**
+ * Trait EasemobGroups
+ * @package link1st\Easemob\App
+ * @property ApiClient client
+ */
 trait EasemobGroups
 {
 
@@ -19,6 +25,8 @@ trait EasemobGroups
      * @param array $group_ids [群id]
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groups($group_ids)
     {
@@ -42,6 +50,8 @@ trait EasemobGroups
      * @param bool $is_approval [加群是否要批准]
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupCreate(
         $group_name,
@@ -54,8 +64,8 @@ trait EasemobGroups
     {
         $url = 'chatgroups';
         $option = [
-            "groupname" => self::stringReplace($group_name),
-            "desc" => self::stringReplace($group_description),
+            "groupname" => Helpers\Str::stringReplace($group_name),
+            "desc" => Helpers\Str::stringReplace($group_description),
             "owner" => $owner_user,
             "public" => $is_public,
             "maxusers" => $max_user,
@@ -79,13 +89,14 @@ trait EasemobGroups
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupEdit($group_id, $group_name = "", $group_description = "", $max_user = 0)
     {
         $url = 'chatgroups/' . $group_id;
         $option = [
-            "groupname" => self::stringReplace($group_name),
-            "description" => self::stringReplace($group_description),
+            "groupname" => Helpers\Str::stringReplace($group_name),
+            "description" => Helpers\Str::stringReplace($group_description),
             "maxusers" => $max_user,
         ];
         $option = array_filter($option);
@@ -103,6 +114,8 @@ trait EasemobGroups
      * @param string $group_id
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupDel($group_id)
     {
@@ -119,6 +132,8 @@ trait EasemobGroups
      * @param $group_id
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupUsers($group_id)
     {
@@ -137,6 +152,7 @@ trait EasemobGroups
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupAddUsers($group_id, $users)
     {
@@ -162,6 +178,7 @@ trait EasemobGroups
      *
      * @return mixed
      * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupDelUsers($group_id, $users)
     {
@@ -182,6 +199,8 @@ trait EasemobGroups
      * @param $user
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function userToGroups($user)
     {
@@ -199,6 +218,8 @@ trait EasemobGroups
      * @param $new_owner_user [新的群主]
      *
      * @return mixed
+     * @throws EasemobException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function groupTransfer($group_id, $new_owner_user)
     {
