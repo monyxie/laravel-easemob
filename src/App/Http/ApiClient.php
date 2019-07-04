@@ -106,27 +106,25 @@ class ApiClient
      */
     public function request($method, $uri, array $options)
     {
-        $response = $this->getClient()->request($method, $uri, $options);
-        $status = $response->getStatusCode();
-        $body = $response->getBody()->getContents();
-
-        if ($status !== 200) {
-            $message = '请求错误！' . $body;
-            throw new EasemobException($message, $status);
+        try {
+            $response = $this->getClient()->request($method, $uri, $options);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $response = $e->getResponse();
+            if (!$response) {
+                throw new EasemobException('请求失败！', -1, $e);
+            }
         }
 
-        $result = null;
-        if ($response->hasHeader('Content-Type')) {
-            $contentType = strtolower($response->getHeader('Content-Type')[0] ?? '');
-            if (substr($contentType, 0, 16) === 'application/json') {
-                $result = json_decode($body, true);
-                if ($result === null) {
-                    $message = '请求错误！返回body不是有效的json：' . $body;
-                    throw new EasemobException($message, $status);
-                }
-            } else {
-                $result = $body;
+        $status = $response->getStatusCode();
+
+        $result = $this->parseBody($response, $status);
+
+        if ($status !== 200) {
+            $message = '请求错误！';
+            if (is_array($result)) {
+                $message .= ($result['error'] ?? '') . ' ' . ($result['error_description'] ?? '');
             }
+            throw new EasemobException($message, $status);
         }
 
         return $result;
@@ -234,5 +232,30 @@ class ApiClient
     public function delete($uri, $params)
     {
         return $this->request('DELETE', $uri, ['body' => json_encode($params)]);
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @param int $status
+     * @return mixed|string|null
+     * @throws EasemobException
+     */
+    private function parseBody(ResponseInterface $response, int $status)
+    {
+        $result = null;
+        $body = $response->getBody()->getContents();
+        if ($response->hasHeader('Content-Type')) {
+            $contentType = strtolower($response->getHeader('Content-Type')[0] ?? '');
+            if (substr($contentType, 0, 16) === 'application/json') {
+                $result = json_decode($body, true);
+                if ($result === null) {
+                    $message = '请求错误！返回body不是有效的json：' . $body;
+                    throw new EasemobException($message, $status);
+                }
+            } else {
+                $result = $body;
+            }
+        }
+        return $result;
     }
 }
