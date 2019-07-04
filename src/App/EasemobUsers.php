@@ -248,7 +248,7 @@ trait EasemobUsers
      */
     public function showBlockedUsers($owner_username)
     {
-        $url = 'users/' . $owner_username . '/block/users';
+        $url = 'users/' . $owner_username . '/blocks/users';
         $option = [];
         return $this->client->get($url, $option);
     }
@@ -263,7 +263,7 @@ trait EasemobUsers
      */
     public function blockUsers($owner_username, $block_usernames)
     {
-        $url = 'users/' . $owner_username . '/block/users';
+        $url = 'users/' . $owner_username . '/blocks/users';
         $option = [
             'usernames' => $block_usernames
         ];
@@ -280,7 +280,7 @@ trait EasemobUsers
      */
     public function unblockUser($owner_username, $blocked_username)
     {
-        $url = 'users/' . $owner_username . '/block/users/' . $blocked_username;
+        $url = 'users/' . $owner_username . '/blocks/users/' . $blocked_username;
         $option = [];
         return $this->client->delete($url, $option);
     }
