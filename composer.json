@@ -28,5 +28,12 @@
         "psr-4": {
             "link1st\\Easemob\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "link1st\\Easemob\\EasemobServiceProvider"
+            ]
+        }
     }
 }
