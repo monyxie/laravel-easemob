@@ -146,7 +146,7 @@ class ApiClient
                 ResponseInterface $res) {
                 $statusCode = $res->getStatusCode();
 
-                $isServerError = $statusCode >= 500 || ($statusCode <= 599);
+                $isServerError = $statusCode >= 500 && $statusCode <= 599;
                 $isAuthenticationError = $statusCode === 401;
                 return $retries < $this->retries && ($isAuthenticationError || $isServerError);
             }));
