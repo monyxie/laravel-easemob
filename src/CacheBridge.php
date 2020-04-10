@@ -24,13 +24,19 @@ class CacheBridge implements CacheInterface
      * @var Repository
      */
     protected $repository;
+    /**
+     * @var bool
+     */
+    private $shouldConvertTtl;
 
     /**
      * @param Repository $repository
+     * @param bool $shouldConvertTtl
      */
-    public function __construct(Repository $repository)
+    public function __construct(Repository $repository, $shouldConvertTtl = true)
     {
         $this->repository = $repository;
+        $this->shouldConvertTtl = $shouldConvertTtl;
     }
 
     public function get($key, $default = null)
@@ -40,7 +46,7 @@ class CacheBridge implements CacheInterface
 
     public function set($key, $value, $ttl = null)
     {
-        return $this->repository->put($key, $value, $this->toMinutes($ttl));
+        return $this->repository->put($key, $value, $this->convertTtl($ttl));
     }
 
     public function delete($key)
@@ -68,8 +74,12 @@ class CacheBridge implements CacheInterface
         return $this->repository->has($key);
     }
 
-    protected function toMinutes($ttl = null)
+    protected function convertTtl($ttl = null)
     {
+        if (!$this->shouldConvertTtl) {
+            return $ttl;
+        }
+
         if (!is_null($ttl)) {
             return $ttl / 60;
         }

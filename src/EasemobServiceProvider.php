@@ -57,7 +57,9 @@ class EasemobServiceProvider extends ServiceProvider
             $config['token_cache_time'] = Config::get('easemob.token_cache_time');
 
             $laravelCache = $this->app->make('cache.store');
-            $psr16Cache = new CacheBridge($laravelCache);
+            // Laravel 5.8 之前要转换缓存单位
+            $shouldConvertTtl = version_compare($this->app->version(), '5.8', '<');
+            $psr16Cache = new CacheBridge($laravelCache, $shouldConvertTtl);
             return new Easemob($config, $psr16Cache);
         });
 
